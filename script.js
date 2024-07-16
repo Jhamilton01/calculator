@@ -48,9 +48,7 @@ function createButtons(){
         button.textContent = i
         buttonsContainer.appendChild(button)
         button.addEventListener('click', () => {
-            num1 += i
-            screenDiv.textContent = num1
-            
+            getNumber(i) 
         } )
     }
 
@@ -63,12 +61,20 @@ function createButtons(){
 
         button.addEventListener('click', () => {
             handleOperation(button.textContent)
+
         })
     }
-
-    return () => parseInt(num1, 10)
 }
 
+function getNumber(i){
+    if (operator){
+        num2 += i
+        screenDiv.textContent = num1 +' '+ operator +' '+ num2
+    }else{
+        num1 += i
+        screenDiv.textContent = num1
+    }
+}
 
 function handleOperation(operationKey){
     switch (operationKey){
@@ -76,27 +82,37 @@ function handleOperation(operationKey){
             clear()
             break
         case '=':
-            const result = operate(parseFloat(num1),parseFloat(num2),operationKey)
+            const result = operate(parseFloat(num1),parseFloat(num2),operator)
             screenContainer.textContent = result
+            num1 = result
+            num2 = ''
+            operator = null
             break
+        case 'x':
+        case '-':
         case '+':
-        case '+':
-        case '+':
-        case '+':
+        case '÷':
+            if (num1 && !operator){
+                operator = operationKey
+                screenContainer.textContent = num1 + ' ' + operator
+            }
+
+
 
     }
 }
 
 function operate(num1, num2, operator){
+    console.log("this is the operator being passes", operator)
     switch (operator){
         case '+':
-            addition(num1, num2)
+            return addition(num1, num2)
         case '-':
-            subtraction(num1, num2)
-        case '*':
-            multiplication(num1, num2)
+            return subtraction(num1, num2)
+        case 'x':
+            return multiplication(num1, num2)
         case '÷':
-            divison(num1, num2)
+            return divison(num1, num2)
         default:
             return
     }
