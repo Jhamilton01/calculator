@@ -44,7 +44,7 @@ function createButtons(){
 
     for (let i=9; i >= 0; i--){
         const button = document.createElement('button')
-        button.classList.add('numbers')
+        button.classList.add('number'+i)
         button.textContent = i
         buttonsContainer.appendChild(button)
         button.addEventListener('click', () => {
@@ -52,18 +52,30 @@ function createButtons(){
         } )
     }
 
-    const operations = '+-÷x=c'
-    for (let char of operations){
+    const operations = ['+', '-', '÷', 'x', '=', 'ce', '←', '.']
+    operations.forEach((char, index) => {
         const button = document.createElement('button')
-        button.classList.add('operations')
+        if(char == '='){
+            button.classList.add('operationsEqual')
+        } else if (char == '+'){
+            button.classList.add('operationsAdd')
+        }else if (char == '.'){
+            button.classList.add('operationsPoint')
+        } else{
+            button.classList.add('operations'+char)
+
+        }
         button.textContent = char
         buttonsContainer.appendChild(button)
-
+    
         button.addEventListener('click', () => {
             handleOperation(button.textContent)
-
+    
         })
-    }
+
+    })
+
+
 }
 
 function getNumber(i){
@@ -78,13 +90,15 @@ function getNumber(i){
 
 function handleOperation(operationKey){
     switch (operationKey){
-        case 'c':
+        case 'ce':
             clear()
             break
+        case '←':
+            backspace()
         case '=':
             const result = operate(parseFloat(num1),parseFloat(num2),operator)
-            screenContainer.textContent = result
-            num1 = result
+            screenContainer.textContent = result.toString()
+            num1 = result.toString()
             num2 = ''
             operator = null
             break
@@ -96,14 +110,12 @@ function handleOperation(operationKey){
                 operator = operationKey
                 screenContainer.textContent = num1 + ' ' + operator
             }
-
-
-
+            break
+            //console.error(`Unknown ioerations: ${operationKey}`)
     }
 }
 
 function operate(num1, num2, operator){
-    console.log("this is the operator being passes", operator)
     switch (operator){
         case '+':
             return addition(num1, num2)
@@ -141,6 +153,26 @@ function clear(){
     num2 =''
     operator = null
     screenContainer.textContent = '0'
+}
+
+function backspace(){
+    //get the number in the ones position of the recently enetered number
+    //if currently typing num1
+    if (operator) {
+        if (num2) {
+            num2 = num2.slice(0, -1);
+            screenDiv.textContent = num1 + ' ' + operator + ' ' + num2;
+        } else {
+            operator = null;
+            screenDiv.textContent = num1;
+        }
+    } else if (num1) {
+        num1 = num1.slice(0, -1);
+        screenDiv.textContent = num1 || '0';
+    }
+
+    console.log('num1:', num1, 'num2:', num2, 'operator:', operator, 'screen:', screenDiv.textContent);
+
 }
 
 
